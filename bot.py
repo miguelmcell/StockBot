@@ -189,13 +189,13 @@ def wait(runTime):
 def main():
 	counter = 0
 	init()
-	navigate()
 	# wait until 2:44
 	# wait('23:59:55')
-	sleep(8)
+	# sleep(8)
 	telegram_send.send(messages=["Bot will now wait until 2:44"])
 	wait('14:44')
 	# wait('23:44')
+	navigate()
 	telegram_send.send(messages=["Bot will now begin checking the page"])
 	while(extract()==0):
 		if(counter > 600):
