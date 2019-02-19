@@ -5,6 +5,7 @@ from time import sleep
 import math
 from Robinhood import Robinhood
 import telegram_send
+import getpass
 
 def init():
 	global driver
@@ -13,7 +14,10 @@ def init():
 	global logged_in
 
 	my_trader = Robinhood()
-	logged_in = my_trader.login(username="miguelmcell",password="!Migmen2020!")
+	username_input = input("Robinhood Username:")
+	password_input = getpass.getpass()
+
+	logged_in = my_trader.login(username=username_input,password=password_input)
 	
 	page_date = 'NULL'
 	driver = webdriver.Chrome(r'C:\Users\migue\Desktop\StockBot\chromedriver.exe')
@@ -37,8 +41,8 @@ def extract():
 	print("checking for today\'s stocks(",date.today().strftime("X%m/X%d/%Y").replace("X0","X").replace('X',''),")")
 	# print("looking for", date.today().strftime("X%m/X%d/%Y").replace("X0","X").replace('X',''))
 	try:
-		date_element = driver.find_elements_by_xpath("//*[text()='2/15/2019']")[0]
-		# date_element = driver.find_elements_by_xpath("//*[text()=" + "\'" + date.today().strftime("X%m/X%d/%Y").replace("X0","X").replace('X','') + "\'" + "]")[0]
+		# date_element = driver.find_elements_by_xpath("//*[text()='2/15/2019']")[0]
+		date_element = driver.find_elements_by_xpath("//*[text()=" + "\'" + date.today().strftime("X%m/X%d/%Y").replace("X0","X").replace('X','') + "\'" + "]")[0]
 	except:
 		return 0
 	stock1_element = driver.find_elements_by_xpath('//*[@id="content"]/article/div/div/div/div/section/div/div/div[1]/div/div/div/div/div/div[3]/h1[2]')[0]
@@ -187,6 +191,9 @@ def main():
 	init()
 	navigate()
 	# wait until 2:44
+	# wait('23:59:55')
+	sleep(8)
+	telegram_send.send(messages=["Bot will now wait until 2:44"])
 	wait('14:44')
 	# wait('23:44')
 	telegram_send.send(messages=["Bot will now begin checking the page"])
@@ -206,7 +213,7 @@ def main():
 	print("information verified, executing robinhood buy")
 	telegram_send.send(messages=["information verified, executing robinhood buy"])
 	execute_buy()
-
+	telegram_send.send(messages=["Orders have successfuly been placed"])
 	#codes
 	# 0 = retry
 	# -1 = something is wrong, examine code
