@@ -173,9 +173,9 @@ def execute_buy():
 	print("-------------------------------------\n")
 	
 	print("Now placing orders")
-	# buy_order1 = my_trader.place_buy_order(stock_instrument1, stock1_total_shares)
-	# buy_order2 = my_trader.place_buy_order(stock_instrument2, stock2_total_shares)
-	# buy_order3 = my_trader.place_buy_order(stock_instrument3, stock3_total_shares)
+	buy_order1 = my_trader.place_buy_order(stock_instrument1, stock1_total_shares)
+	buy_order2 = my_trader.place_buy_order(stock_instrument2, stock2_total_shares)
+	buy_order3 = my_trader.place_buy_order(stock_instrument3, stock3_total_shares)
 	
 	# sell_order = my_trader.place_sell_order(stock_instrument, 1)
 	print("Orders have successfuly been placed")
