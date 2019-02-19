@@ -1,8 +1,10 @@
 from selenium import webdriver
-from datetime import datetime, date
+from datetime import datetime, date, time
 import pandas as pd
-import time
+from time import sleep
+import math
 from Robinhood import Robinhood
+import telegram_send
 
 def init():
 	global driver
@@ -12,7 +14,7 @@ def init():
 
 	my_trader = Robinhood()
 	logged_in = my_trader.login(username="miguelmcell",password="!Migmen2020!")
-	print(my_trader.quote_data("NVIDIA"))
+	
 	page_date = 'NULL'
 	driver = webdriver.Chrome(r'C:\Users\migue\Desktop\StockBot\chromedriver.exe')
 	print('driver initialized')
@@ -101,6 +103,9 @@ def verify():
 		print("INVALID STOCK", stock3)
 		return -1
 
+	telegram_send.send(messages=[stock1])
+	telegram_send.send(messages=[stock2])
+	telegram_send.send(messages=[stock3])
 	#update with today'stocks
 	with open('previous.txt', 'w') as f:
 		f.write(page_date+'\n')
@@ -119,34 +124,88 @@ def execute_buy():
 	# do all the nasty math for the 3 stocks
 	# 50% go to stock1
 	# 25% for the rest
-	funds = (my_trader.equity()*0.95) #should probably change that later
+	funds = my_trader.equity()
 	stock_instrument1 = my_trader.instruments(stock1)[0]
 	stock_instrument2 = my_trader.instruments(stock2)[0]
 	stock_instrument3 = my_trader.instruments(stock3)[0]
 
-	# stock_price1 = 
-	# stock_price2 = 
-	# stock_price3 = 
+	stock_price1 = float(my_trader.quote_data(stock1)['ask_price'])
+	stock1_funds = funds/2
+	funds -= stock1_funds
+	stock1_total_shares = math.floor(stock1_funds/stock_price1)
+
+	stock_price2 = float(my_trader.quote_data(stock2)['ask_price'])
+	stock2_funds = funds/2
+	funds -= stock2_funds
+	stock2_total_shares = math.floor(stock2_funds/stock_price2)
+
+	stock_price3 = float(my_trader.quote_data(stock3)['ask_price'])
+	stock3_funds = funds #yes it should be empty now
+	funds -= stock3_funds
+	stock3_total_shares = math.floor(stock3_funds/stock_price3)
+
+	print("-------------------------------------")
+	print("Stock:",stock1)
+	print("Ask Price:",stock_price1)
+	print("50% of holdings:", stock1_funds)
+	print("Buying",stock1_total_shares,"shares of",stock1)
+	print("Total spent on",stock1,":",stock1_total_shares*stock_price1)
+	print("-------------------------------------\n")
+
+	print("-------------------------------------")
+	print("Stock:",stock2)
+	print("Ask Price:",stock_price2)
+	print("25% of holdings:", stock2_funds)
+	print("Buying",stock2_total_shares,"shares of",stock2)
+	print("Total spent on",stock2,":",stock2_total_shares*stock_price2)
+	print("-------------------------------------\n")
+
+	print("-------------------------------------")
+	print("Stock:",stock3)
+	print("Ask Price:",stock_price3)
+	print("25% of holdings:", stock3_funds)
+	print("Buying",stock3_total_shares,"shares of",stock3)
+	print("Total spent on",stock3,":",stock3_total_shares*stock_price3)
+	print("-------------------------------------\n")
 	
+	print("Now placing orders")
+	# buy_order1 = my_trader.place_buy_order(stock_instrument1, stock1_total_shares)
+	# buy_order2 = my_trader.place_buy_order(stock_instrument2, stock2_total_shares)
+	# buy_order3 = my_trader.place_buy_order(stock_instrument3, stock3_total_shares)
+	
+	# sell_order = my_trader.place_sell_order(stock_instrument, 1)
+	print("Orders have successfuly been placed")
 
-
-	buy_order = my_trader.place_buy_order(stock_instrument, 1)
-	sell_order = my_trader.place_sell_order(stock_instrument, 1)
-
+def wait(runTime):
+	startTime = time(*(map(int, runTime.split(':'))))
+	while (startTime > datetime.today().time()):
+		print(startTime,datetime.today().time())
+		sleep(1)# you can change 1 sec interval to any other
 
 def main():
+	counter = 0
 	init()
 	navigate()
+	# wait until 2:44
+	wait('14:44')
+	# wait('23:44')
+	telegram_send.send(messages=["Bot will now begin checking the page"])
 	while(extract()==0):
+		if(counter > 600):
+			telegram_send.send(messages=["Timed out, exiting"])
+			return -1
 		print("stocks not updated, trying again in 5 seconds")
-		time.sleep(5)
+		counter = counter + 1 
+		sleep(5)
 	print("**Today's stocks have been found**")
+	telegram_send.send(messages=["Today's stocks have been found, they are:"])
 	if(verify()==-1):
+		telegram_send.send(messages=["Nevermind it broke"])
 		print("exiting")
 		return -1
-	
 	print("information verified, executing robinhood buy")
-	#execute_buy()
+	telegram_send.send(messages=["information verified, executing robinhood buy"])
+	execute_buy()
 
 	#codes
 	# 0 = retry
