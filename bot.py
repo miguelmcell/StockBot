@@ -190,15 +190,15 @@ def main():
 	counter = 0
 	init()
 	# wait until 2:44
-	# wait('23:59:55')
-	# sleep(8)
+	wait('23:59:55')
+	sleep(8)
 	telegram_send.send(messages=["Bot will now wait until 2:44"])
-	wait('14:44')
+	wait('14:42')
 	# wait('23:44')
 	navigate()
 	telegram_send.send(messages=["Bot will now begin checking the page"])
 	while(extract()==0):
-		if(counter > 600):
+		if(counter > 700):
 			telegram_send.send(messages=["Timed out, exiting"])
 			return -1
 		print("stocks not updated, trying again in 5 seconds")
