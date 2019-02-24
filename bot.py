@@ -192,7 +192,7 @@ def main():
 	# wait until 2:44
 	wait('23:59:55')
 	sleep(8)
-	telegram_send.send(messages=["Bot will now wait until 2:44"])
+	telegram_send.send(messages=["Bot will now wait until 2:42"])
 	wait('14:42')
 	# wait('23:44')
 	navigate()
