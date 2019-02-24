@@ -16,8 +16,8 @@ def init():
 	my_trader = Robinhood()
 	username_input = input("Robinhood Username:")
 	password_input = getpass.getpass()
-
-	logged_in = my_trader.login(username=username_input,password=password_input)
+	auth_code = input("2FA Code:")
+	logged_in = my_trader.login(username=username_input,password=password_input,mfa_code=auth_code)
 	
 	page_date = 'NULL'
 	driver = webdriver.Chrome(r'C:\Users\migue\Desktop\StockBot\chromedriver.exe')
