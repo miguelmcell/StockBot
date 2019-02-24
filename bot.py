@@ -18,7 +18,7 @@ def init():
 	password_input = getpass.getpass()
 	auth_code = input("2FA Code:")
 	logged_in = my_trader.login(username=username_input,password=password_input,mfa_code=auth_code)
-	
+
 	page_date = 'NULL'
 	driver = webdriver.Chrome(r'C:\Users\migue\Desktop\StockBot\chromedriver.exe')
 	print('driver initialized')
@@ -36,7 +36,7 @@ def extract():
 	global page_date
 	global stock1
 	global stock2
-	global stock3
+	global stock3 
 	driver.get('https://tradestockalerts.com/penny/')
 	print("checking for today\'s stocks(",date.today().strftime("X%m/X%d/%Y").replace("X0","X").replace('X',''),")")
 	# print("looking for", date.today().strftime("X%m/X%d/%Y").replace("X0","X").replace('X',''))
@@ -171,12 +171,12 @@ def execute_buy():
 	print("Buying",stock3_total_shares,"shares of",stock3)
 	print("Total spent on",stock3,":",stock3_total_shares*stock_price3)
 	print("-------------------------------------\n")
-	
+
 	print("Now placing orders")
 	buy_order1 = my_trader.place_buy_order(stock_instrument1, stock1_total_shares)
 	buy_order2 = my_trader.place_buy_order(stock_instrument2, stock2_total_shares)
 	buy_order3 = my_trader.place_buy_order(stock_instrument3, stock3_total_shares)
-	
+
 	# sell_order = my_trader.place_sell_order(stock_instrument, 1)
 	print("Orders have successfuly been placed")
 
@@ -202,7 +202,7 @@ def main():
 			telegram_send.send(messages=["Timed out, exiting"])
 			return -1
 		print("stocks not updated, trying again in 5 seconds")
-		counter = counter + 1 
+		counter = counter + 1
 		sleep(5)
 	print("**Today's stocks have been found**")
 	telegram_send.send(messages=["Today's stocks have been found, they are:"])
