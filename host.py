@@ -3,26 +3,23 @@ from datetime import datetime, date, time
 import pandas as pd
 from time import sleep
 import math
-from Robinhood import Robinhood
 import telegram_send
 import getpass
 
-
+class Host:
+	def __init__(self):
+		self.driver = driver = webdriver.Chrome('CREATE ENVIRONMENT VARIABLE')
 
 def init():
-	global driver
 	global page_date
 	global my_trader
 	global logged_in
 
-	my_trader = Robinhood()
 	username_input = input("Robinhood Username:")
 	password_input = getpass.getpass()
 	auth_code = input("2FA Code:")
-	logged_in = my_trader.login(username=username_input,password=password_input,mfa_code=auth_code)
 
 	page_date = 'NULL'
-	driver = webdriver.Chrome('CREATE ENVIRONMENT VARIABLE')
 	print('driver initialized')
 
 def navigate():
@@ -30,6 +27,7 @@ def navigate():
 	driver.get('https://tradestockalerts.com/my-account/')
 	driver.find_element_by_id('username').send_keys('miguelmendoza1693')#Create environment variables for these 2
 	driver.find_element_by_id('password').send_keys('!migmen2020!')#env var
+	driver.find_element_by_name('login').click()	driver.find_element_by_id('password').send_keys('!migmen2020!')#env var
 	driver.find_element_by_name('login').click()
 	print('successfuly logged into tradestockalerts')
 
@@ -38,7 +36,7 @@ def extract():
 	global page_date
 	global stock1
 	global stock2
-	global stock3 
+	global stock3
 	driver.get('https://tradestockalerts.com/penny/')
 	print("checking for today\'s stocks(",date.today().strftime("X%m/X%d/%Y").replace("X0","X").replace('X',''),")")
 	# print("looking for", date.today().strftime("X%m/X%d/%Y").replace("X0","X").replace('X',''))
@@ -189,7 +187,6 @@ def wait(runTime):
 		sleep(1)# you can change 1 sec interval to any other
 
 def main():
-	counter = 0
 	init()
 	# wait until 2:44
 	wait('23:59:55')
